@@ -1,9 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-每日新闻简报 - 新闻抓取脚本
-功能：搜索当日热点新闻，AI 提炼重点
+每日新闻简报 - 新闻抓取脚本 v3（生产版）
+功能：搜索当日热点新闻 + 备用新闻源，AI 提炼重点
 """
+
+# 使用 v3 版本
+import sys
+from pathlib import Path
+
+# 重定向到 v3
+v3_script = Path(__file__).parent / "fetch_news_v3.py"
+if v3_script.exists():
+    with open(v3_script, "r", encoding="utf-8") as f:
+        exec(f.read())
+else:
+    print("错误：fetch_news_v3.py 不存在")
+    sys.exit(1)
 
 import json
 import subprocess
@@ -26,9 +39,10 @@ def search_news(keyword, category, limit=5):
     try:
         # 构建搜索命令
         searxng_dir = Path.home() / ".openclaw/workspace/skills/searxng"
+        today = datetime.now().strftime('%Y-%m-%d')
         cmd = [
             "uv", "run", "scripts/searxng.py",
-            "search", f"{datetime.now().strftime('%Y 年 %m 月 %d 日')} {keyword}",
+            "search", f"{today} {keyword}",
             "-n", str(limit),
             "--language", "zh"
         ]
